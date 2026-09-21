@@ -1,0 +1,14 @@
+# AutomateIT
+
+> AutomateIT helps organisations uncover hidden costs, automate what matters and deliver measurable savings. Business improvement first — automation where it earns its place.
+
+## Pages
+
+- [Home](https://automateit.tech/): Reduce Costs. Unlock Growth. We help organisations uncover hidden costs, automate what matters and deliver measurable savings.
+- [What We Do](https://automateit.tech/what-we-do): Remove operational bottlenecks and reduce the cost of doing business. AutomateIT's COST framework (Capture, Optimise, Simplify, Transform) establishes the business case before any technology is proposed.
+- [Use Cases](https://automateit.tech/use-cases): Where the savings actually come from — automation opportunities across Finance & Accounting, Operations, HR, Customer Service, Sales & Marketing, Procurement, IT Management and Project Management.
+- [Contact](https://automateit.tech/contact): Book a free Cost Reduction Assessment, or enquire about partnering with AutomateIT to deliver managed automation to your own clients.
+
+## Contact
+
+Email: info@automateit.tech

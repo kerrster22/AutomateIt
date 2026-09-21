@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+@theme {
+  /* design breakpoints: mobile < 1060, tablet 1060-1239, desktop >= 1240 */
+  --breakpoint-md: 1060px;
+  --breakpoint-lg: 1240px;
+}
+
+@theme inline {
+  --font-display: var(--font-archivo);
+  --font-sans: var(--font-instrument-sans);
+  --font-mono: var(--font-plex-mono);
+
+  --color-bg: var(--color-bg-value);
+  --color-alt: var(--color-alt-value);
+  --color-card: var(--color-card-value);
+  --color-ink: var(--color-ink-value);
+  --color-muted: var(--color-muted-value);
+  --color-faint: var(--color-faint-value);
+  --color-border: var(--color-border-value);
+  --color-line: var(--color-line-value);
+  --color-strong: var(--color-strong-value);
+  --color-btn: var(--color-btn-value);
+  --color-btnink: var(--color-btnink-value);
+  --color-accent: var(--color-accent-value);
+  --color-accent2: var(--color-accent2-value);
+  --color-accent3: var(--color-accent3-value);
+  --color-tint: var(--color-tint-value);
+  --color-focus: var(--color-focus-value);
+  --color-success: var(--color-success-value);
+  --color-error: var(--color-error-value);
+  --color-panel: var(--color-panel-value);
+  --color-panelink: var(--color-panelink-value);
+  --color-panelline: var(--color-panelline-value);
+  --color-neutralline: var(--color-neutralline-value);
+}
+
+:root {
+  --color-bg-value: #ffffff;
+  --color-alt-value: #f1f6fb;
+  --color-card-value: #ffffff;
+  --color-ink-value: #000000;
+  --color-muted-value: #4c5763;
+  --color-faint-value: #5e6a76;
+  --color-border-value: #dde6ef;
+  --color-line-value: #c6d3e0;
+  --color-strong-value: #94a5b5;
+  --color-btn-value: #004aad;
+  --color-btnink-value: #ffffff;
+  --color-accent-value: #004aad;
+  --color-accent2-value: #1d74c4;
+  --color-accent3-value: #8bcffe;
+  --color-tint-value: #e8f3fd;
+  --color-focus-value: #004aad;
+  --color-success-value: #1d6b4e;
+  --color-error-value: #b3261e;
+  --color-panel-value: #000000;
+  --color-panelink-value: #ffffff;
+  --color-panelline-value: #3a4650;
+  --color-neutralline-value: #7a8794;
+}
+
+:root[data-theme="dark"] {
+  --color-bg-value: #0e1418;
+  --color-alt-value: #141c22;
+  --color-card-value: #1b242c;
+  --color-ink-value: #edf2f6;
+  --color-muted-value: #a9b6c0;
+  --color-faint-value: #93a1ac;
+  --color-border-value: #2a343d;
+  --color-line-value: #3a4650;
+  --color-strong-value: #556572;
+  --color-btn-value: #8bcffe;
+  --color-btnink-value: #00121f;
+  --color-accent-value: #8bcffe;
+  --color-accent2-value: #5fb4f2;
+  --color-accent3-value: #004aad;
+  --color-tint-value: #16222c;
+  --color-focus-value: #8bcffe;
+  --color-success-value: #6fc79e;
+  --color-error-value: #f0938c;
+  --color-panel-value: #141c22;
+  --color-panelink-value: #edf2f6;
+  --color-panelline-value: #3a4650;
+  --color-neutralline-value: #8a97a3;
+}
+
+/* Layered so Tailwind utility classes (which Tailwind v4 emits inside its
+   own cascade layers) can still override these element defaults. */
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans), Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition:
+      background-color 200ms ease,
+      color 200ms ease;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-faint);
+    opacity: 1;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes sheetIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
