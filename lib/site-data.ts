@@ -152,9 +152,3 @@ export const cases = [1, 2, 3, 4].map((i) => ({
   ],
   contextLabel: `Use case 0${i}`,
 }));
-
-// Illustrative cumulative cost index — preserved exactly from the supplied
-// cost-comparison graph. Index values, not quoted supplier prices.
-export const chartPoints = ["Implementation", "Year 1", "Year 2", "Year 3"];
-export const chartRpa = [55, 100, 145, 190];
-export const chartAit = [22, 35, 47, 60];

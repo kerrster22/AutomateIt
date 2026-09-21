@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { CtaPrimary } from "@/components/cta";
-import { approach, cost, method, offers, whySlots } from "@/lib/site-data";
+import { approach, method, offers, whySlots } from "@/lib/site-data";
 
 export const metadata: Metadata = {
   title: "What We Do",
@@ -44,29 +45,14 @@ export default function WhatWeDoPage() {
             Our COST framework is how we get from a vague sense of inefficiency to a defensible business
             case.
           </p>
-          <div className="border border-accent rounded bg-card p-[clamp(24px,3vw,40px)]">
-            <div className="flex items-start gap-1 mb-[clamp(22px,3vw,30px)]">
-              <span className="font-display font-extrabold text-[clamp(26px,3vw,34px)] tracking-[-0.03em] text-accent">
-                COST
-              </span>
-              <span className="font-mono text-xs text-accent pt-1">&#8482;</span>
-            </div>
-            <div className="grid gap-px bg-border">
-              {cost.map((c) => (
-                <div
-                  key={c.letter}
-                  className="bg-card grid grid-cols-1 md:grid-cols-[260px_1fr] gap-2 md:gap-[22px] items-baseline py-[18px]"
-                >
-                  <div className="flex items-baseline gap-3.5">
-                    <span className="font-display font-extrabold text-[30px] leading-none tracking-[-0.03em] text-accent w-[26px] flex-none">
-                      {c.letter}
-                    </span>
-                    <span className="font-display font-bold text-[21px] tracking-[-0.026em]">{c.word}</span>
-                  </div>
-                  <p className="m-0 text-[16.5px] leading-[1.55] text-muted max-w-[52ch]">{c.body}</p>
-                </div>
-              ))}
-            </div>
+          <div className="border border-line rounded overflow-hidden bg-card">
+            <Image
+              src="/COST Image.jpg"
+              alt="COST framework: Capture, Optimise, Simplify, Transform"
+              width={1160}
+              height={397}
+              className="w-full h-auto"
+            />
           </div>
         </div>
       </section>
@@ -134,27 +120,27 @@ export default function WhatWeDoPage() {
       </section>
 
       {/* Delivery */}
-      <section className="bg-panel text-panelink">
+      <section className="bg-[#004AAD] text-white">
         <div className="max-w-[1180px] mx-auto px-[clamp(18px,3vw,28px)] py-[clamp(64px,9vw,108px)]">
-          <div className="font-mono text-[12.5px] tracking-[0.12em] uppercase opacity-[0.72] font-medium mb-5">
+          <div className="font-mono text-[12.5px] tracking-[0.12em] uppercase text-[#8BCFFE] font-medium mb-5">
             Delivery
           </div>
           <h2 className="font-display font-extrabold text-[clamp(28px,3.6vw,46px)] leading-[1.05] tracking-[-0.034em] m-0 mb-4 max-w-[22ch]">
             Every step has an output you can review.
           </h2>
-          <p className="m-0 mb-[clamp(38px,5vw,56px)] text-[17.5px] leading-[1.6] opacity-[0.82] max-w-[50ch]">
+          <p className="m-0 mb-[clamp(38px,5vw,56px)] text-[17.5px] leading-[1.6] text-[#D8EBFB] max-w-[50ch]">
             Nothing gets built on a hunch, and nothing goes live without your sign-off.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
             {method.map((m) => (
-              <div key={m.num} className="relative pt-[26px] pr-[22px] pb-[30px] border-t border-panelline">
-                <div className="absolute -top-1 left-0 w-[7px] h-[7px] rounded-full bg-panelink" />
-                <div className="font-mono text-xs tracking-[0.1em] opacity-[0.72] mb-3 font-medium">{m.num}</div>
+              <div key={m.num} className="relative pt-[26px] pr-[22px] pb-[30px] border-t border-white/28">
+                <div className="absolute -top-1 left-0 w-[7px] h-[7px] rounded-full bg-white" />
+                <div className="font-mono text-xs tracking-[0.1em] text-[#8BCFFE] mb-3 font-medium">{m.num}</div>
                 <h3 className="font-display font-bold text-[22px] tracking-[-0.026em] m-0 mb-2.5">
                   {m.title}
                 </h3>
-                <p className="m-0 mb-4 text-[15.5px] leading-[1.55] opacity-[0.84]">{m.body}</p>
-                <div className="inline-block border border-panelline rounded px-2.5 py-1.5 font-mono text-xs tracking-[0.04em] opacity-90">
+                <p className="m-0 mb-4 text-[15.5px] leading-[1.55] text-[#D8EBFB]">{m.body}</p>
+                <div className="inline-block border border-white/28 rounded px-2.5 py-1.5 font-mono text-xs tracking-[0.04em] text-[#EAF4FE]">
                   {m.out}
                 </div>
               </div>

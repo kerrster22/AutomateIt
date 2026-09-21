@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { CostComparisonChart } from "@/components/cost-comparison-chart";
 import { CtaPrimary } from "@/components/cta";
 import { cases, journey } from "@/lib/site-data";
 
@@ -82,31 +82,14 @@ export default function UseCasesPage() {
       {/* Cost comparison */}
       <section className="border-t border-border bg-alt">
         <div className="max-w-[1180px] mx-auto px-[clamp(18px,3vw,28px)] py-[clamp(56px,7vw,88px)]">
-          <h2 className="font-display font-extrabold text-[clamp(28px,3.6vw,44px)] leading-[1.05] tracking-[-0.034em] m-0 mb-3.5 max-w-[22ch]">
-            A lower-cost route to automation
-          </h2>
-          <p className="m-0 mb-[clamp(30px,4vw,44px)] text-[17.5px] leading-[1.6] text-muted max-w-[56ch] text-pretty">
-            AutomateIT avoids much of the licence and development overhead associated with traditional RPA.
-          </p>
-
-          <div className="border border-line rounded bg-card p-[clamp(22px,3vw,34px)]">
-            <div className="flex flex-wrap gap-[22px] mb-[22px]">
-              <div className="flex items-center gap-2.5">
-                <span className="w-[26px] h-1 rounded-sm bg-neutralline" />
-                <span className="text-[15px] text-muted">Licensed enterprise RPA (e.g. UiPath)</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <span className="w-[26px] h-1 rounded-sm bg-accent2" />
-                <span className="text-[15px] font-semibold">AutomateIT</span>
-              </div>
-            </div>
-
-            <CostComparisonChart />
-
-            <p className="mt-[22px] mb-0 text-sm leading-[1.6] text-faint max-w-[96ch]">
-              Illustrative comparison only. Index values show relative positioning, not quoted supplier
-              prices. Actual costs depend on scope, licences, infrastructure, implementation and support.
-            </p>
+          <div className="border border-line rounded overflow-hidden bg-card">
+            <Image
+              src="/AutomateIT_Cost_Comparison.png"
+              alt="A lower-cost route to automation: AutomateIT avoids much of the licence and development overhead associated with traditional RPA."
+              width={2520}
+              height={1440}
+              className="w-full h-auto"
+            />
           </div>
         </div>
       </section>
