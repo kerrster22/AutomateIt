@@ -39,7 +39,7 @@ export default function OgImage() {
               borderRadius: 4,
             }}
           />
-          Automate it.
+          AutomateIT
         </div>
         <div style={{ display: "flex", fontSize: 84, fontWeight: 800, marginTop: 40, letterSpacing: -2 }}>
           Reduce Costs.

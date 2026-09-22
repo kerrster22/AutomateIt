@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useLayoutEffect, useState } from "react";
 
 export { THEME_INIT_SCRIPT } from "./theme-script";
 
@@ -28,6 +28,22 @@ function initialTheme(): Theme {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(initialTheme);
+
+  // The inline script (THEME_INIT_SCRIPT) sets data-theme on <html> before
+  // hydration to avoid a flash, but React's hydration reconciliation clears
+  // attributes on <html> it doesn't itself render — re-apply it here so the
+  // stored theme survives past hydration instead of silently reverting to
+  // light. Runs before paint (unlike useEffect) so there's no visible flash.
+  useLayoutEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEY);
+      if (stored === "dark" || stored === "light") {
+        document.documentElement.setAttribute("data-theme", stored);
+      }
+    } catch {
+      // localStorage unavailable — nothing to re-apply.
+    }
+  }, []);
 
   const setTheme = useCallback((next: Theme) => {
     setThemeState(next);

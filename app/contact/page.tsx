@@ -17,10 +17,12 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 export default async function ContactPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
   const contextParam = params.context;
-  const enqParam = params.enq;
+  // `type` is the documented param (?type=partner / ?type=customer); `enq` is
+  // kept as an alias since it predates this and may already be linked/bookmarked.
+  const typeParam = params.type ?? params.enq;
 
   const initialContext = typeof contextParam === "string" ? contextParam : undefined;
-  const initialEnq = (typeof enqParam === "string" ? enqParam : "").toLowerCase() === "partner" ? "Partner" : "Customer";
+  const initialEnq = (typeof typeParam === "string" ? typeParam : "").toLowerCase() === "partner" ? "Partner" : "Customer";
 
   return (
     <main>

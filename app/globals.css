@@ -152,6 +152,12 @@
   }
 }
 
+/* Logo artwork is black-on-transparent with no theme-aware colour baked in,
+   so dark mode is handled with a filter rather than currentColor. */
+[data-theme="dark"] .logo-mark-invert {
+  filter: invert(1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

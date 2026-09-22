@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CookiePreferences } from "@/components/cookie-preferences";
 
 export const metadata: Metadata = {
   title: "Cookie Preferences",
@@ -17,9 +18,15 @@ export default function CookiesPage() {
           Cookie Preferences
         </h1>
         <p className="mt-6 text-[17.5px] leading-[1.6] text-muted max-w-[60ch]">
-          This page is a placeholder. This site does not currently set any non-essential cookies. A full
-          cookie policy and preference control will be published here if that changes.
+          This site uses Google Analytics to understand site traffic, in the form of a single analytics
+          cookie set by Google. It is only set once you choose &ldquo;Accept&rdquo; or turn it on below —
+          nothing is set until then, and you can change your mind at any time.
         </p>
+        <p className="mt-4 text-[17px] leading-[1.6] text-muted max-w-[60ch]">
+          Turning analytics off (or not turning it on) does not affect your ability to use the site,
+          including the contact form.
+        </p>
+        <CookiePreferences />
       </section>
     </main>
   );

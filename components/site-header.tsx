@@ -19,7 +19,7 @@ export function SiteHeader() {
       <div className="max-w-[1180px] mx-auto px-[clamp(18px,3vw,28px)] min-h-[76px] flex items-center gap-[clamp(14px,3vw,34px)]">
         <Link
           href="/"
-          aria-label="Automate it. — home"
+          aria-label="AutomateIT — home"
           className="flex-none"
           onClick={() => setMenuOpen(false)}
         >
@@ -37,7 +37,7 @@ export function SiteHeader() {
                 key={n.href}
                 href={n.href}
                 aria-current={active ? "page" : undefined}
-                className={`relative flex items-center min-h-11 py-[26px] whitespace-nowrap text-[15.5px] ${
+                className={`relative flex items-center min-h-11 py-[26px] whitespace-nowrap text-[16px] ${
                   active ? "font-semibold" : "font-medium"
                 } text-ink transition-opacity duration-150 hover:opacity-60`}
               >
@@ -64,10 +64,16 @@ export function SiteHeader() {
                   onClick={() => setTheme(t)}
                   aria-pressed={active}
                   suppressHydrationWarning
-                  className="relative min-w-[50px] min-h-[38px] px-[11px] rounded-[5px] font-mono text-[11.5px] tracking-[0.06em] uppercase text-ink"
+                  className="relative min-w-[52px] min-h-[40px] px-[11px] rounded-[5px] font-mono text-[13px] tracking-[0.06em] uppercase text-ink"
                 >
-                  {active ? <span className="absolute inset-0 rounded-[5px] bg-tint" /> : null}
-                  <span className={`relative z-10 ${active ? "font-semibold" : "font-normal"}`}>
+                  <span
+                    suppressHydrationWarning
+                    className={`absolute inset-0 rounded-[5px] bg-tint ${active ? "opacity-100" : "opacity-0"}`}
+                  />
+                  <span
+                    suppressHydrationWarning
+                    className={`relative z-10 ${active ? "font-semibold" : "font-normal"}`}
+                  >
                     {t}
                   </span>
                 </button>
@@ -75,8 +81,8 @@ export function SiteHeader() {
             })}
           </div>
           <Link
-            href="/contact"
-            className="inline-flex items-center min-h-11 px-5 rounded-md bg-btn text-btnink text-[15.5px] font-semibold whitespace-nowrap transition-opacity duration-150 hover:opacity-[0.86]"
+            href="/contact?type=customer"
+            className="inline-flex items-center min-h-11 px-5 rounded-md bg-btn text-btnink text-[16px] font-semibold whitespace-nowrap transition-opacity duration-150 hover:opacity-[0.86]"
           >
             Book an assessment
           </Link>
@@ -85,8 +91,8 @@ export function SiteHeader() {
         {/* Mobile controls */}
         <div className="flex md:hidden items-center gap-2">
           <Link
-            href="/contact"
-            className="inline-flex items-center min-h-11 px-[15px] rounded-md bg-btn text-btnink text-[15px] font-semibold"
+            href="/contact?type=customer"
+            className="inline-flex items-center min-h-11 px-[15px] rounded-md bg-btn text-btnink text-[16px] font-semibold"
           >
             Book
           </Link>
@@ -140,10 +146,16 @@ export function SiteHeader() {
                   onClick={() => setTheme(t)}
                   aria-pressed={active}
                   suppressHydrationWarning
-                  className="relative flex-1 min-h-12 border border-line rounded-md font-mono text-xs tracking-[0.06em] uppercase text-ink"
+                  className="relative flex-1 min-h-12 border border-line rounded-md font-mono text-[13px] tracking-[0.06em] uppercase text-ink"
                 >
-                  {active ? <span className="absolute inset-0 rounded-[5px] bg-tint" /> : null}
-                  <span className={`relative z-10 ${active ? "font-semibold" : "font-normal"}`}>
+                  <span
+                    suppressHydrationWarning
+                    className={`absolute inset-0 rounded-[5px] bg-tint ${active ? "opacity-100" : "opacity-0"}`}
+                  />
+                  <span
+                    suppressHydrationWarning
+                    className={`relative z-10 ${active ? "font-semibold" : "font-normal"}`}
+                  >
                     {t} mode
                   </span>
                 </button>

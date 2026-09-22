@@ -1,21 +1,40 @@
 import Link from "next/link";
-import { CtaPrimary, CtaSecondary, CtaText } from "@/components/cta";
+import Image from "next/image";
+import { CtaPrimary, CtaText } from "@/components/cta";
 import { areas, benefits, frictions, outcomes, partnerSupport, partnerUs, partnerYou, stages } from "@/lib/site-data";
 
 export default function HomePage() {
   return (
     <main>
-      {/* Hero */}
-      <section className="max-w-[1180px] mx-auto px-[clamp(18px,3vw,28px)] pt-[clamp(72px,12vw,152px)] pb-[clamp(72px,11vw,140px)]">
-        <h1 className="font-display font-extrabold text-[clamp(44px,8vw,104px)] leading-[0.95] tracking-[-0.042em] m-0 max-w-[14ch] text-balance">
-          Reduce Costs. Unlock Growth.
-        </h1>
-        <p className="mt-[clamp(28px,4vw,40px)] text-[clamp(18px,2vw,23px)] leading-[1.5] text-muted max-w-[46ch] text-pretty">
-          We help organisations uncover hidden costs, automate what matters and deliver measurable savings.
-        </p>
-        <div className="flex flex-wrap gap-3 mt-[clamp(34px,4vw,46px)]">
-          <CtaPrimary href="/contact">Book a Free Cost Reduction Assessment</CtaPrimary>
-          <CtaSecondary href="/#how-it-works">See How It Works</CtaSecondary>
+      {/* Hero — full-bleed image, spans the whole window width */}
+      <section className="relative w-full overflow-hidden h-[clamp(480px,72vh,760px)]">
+        <Image
+          src="/Automateithero.png"
+          alt="A laptop showing the AutomateIT automation dashboard, connecting emails, forms, documents and CRM data through to automated processing, analysis and notifications"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/5" />
+        <div className="absolute inset-0 flex flex-col justify-end">
+          <div className="max-w-[1180px] mx-auto w-full px-[clamp(18px,3vw,28px)] pb-[clamp(40px,7vw,72px)]">
+            <h1 className="font-display font-extrabold text-white text-[clamp(34px,6vw,80px)] leading-[0.98] tracking-[-0.04em] m-0 max-w-[14ch] text-balance">
+              Reduce Costs. Unlock Growth.
+            </h1>
+            <p className="mt-[clamp(16px,2.5vw,26px)] text-white/85 text-[clamp(16px,1.6vw,20px)] leading-[1.5] max-w-[46ch] text-pretty">
+              We help organisations uncover hidden costs, automate what matters and deliver measurable savings.
+            </p>
+            <div className="flex flex-wrap gap-3 mt-[clamp(20px,3vw,32px)]">
+              <CtaPrimary href="/contact?type=customer">Book a Free Cost Reduction Assessment</CtaPrimary>
+              <Link
+                href="/#how-it-works"
+                className="inline-flex items-center justify-center min-h-14 px-7 rounded-md border border-white/50 text-white text-[17px] font-semibold bg-white/10 backdrop-blur-sm transition-colors duration-150 hover:bg-white/20"
+              >
+                See How It Works
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -58,6 +77,28 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Cost comparison — moved here from Use Cases so it supports the cost
+          story right after "The problem" establishes why it matters. */}
+      <section className="border-t border-border">
+        <div className="max-w-[1180px] mx-auto px-[clamp(18px,3vw,28px)] py-[clamp(56px,7vw,88px)]">
+          <div className="font-mono text-[12.5px] tracking-[0.12em] uppercase text-faint font-medium mb-5">
+            Why AutomateIT
+          </div>
+          <p className="m-0 mb-[clamp(28px,3vw,36px)] text-[17.5px] leading-[1.6] text-muted max-w-[56ch] text-pretty">
+            Here&rsquo;s how that plays out against traditional enterprise RPA.
+          </p>
+          <div className="border border-line rounded overflow-hidden bg-card">
+            <Image
+              src="/AutomateIT_Cost_Comparison.png"
+              alt="A lower-cost route to automation: AutomateIT avoids much of the licence and development overhead associated with traditional RPA."
+              width={2520}
+              height={1440}
+              className="w-full h-auto"
+            />
           </div>
         </div>
       </section>
@@ -107,7 +148,7 @@ export default function HomePage() {
                 <h3 className="font-display font-bold text-[19px] tracking-[-0.022em] mt-1.5 mb-0">
                   {a.title}
                 </h3>
-                <p className="m-0 text-[15.5px] leading-[1.55] text-muted">{a.body}</p>
+                <p className="m-0 text-[16px] leading-[1.55] text-muted">{a.body}</p>
               </div>
             ))}
           </div>
@@ -129,7 +170,7 @@ export default function HomePage() {
                 <span className="font-mono text-xs text-accent flex-none font-medium">{o.num}</span>
                 <div>
                   <div className="font-display font-bold text-xl tracking-[-0.024em]">{o.title}</div>
-                  <div className="mt-1.5 text-[15.5px] leading-[1.55] text-muted">{o.body}</div>
+                  <div className="mt-1.5 text-[16px] leading-[1.55] text-muted">{o.body}</div>
                 </div>
               </div>
             ))}
@@ -144,7 +185,7 @@ export default function HomePage() {
             Ready to uncover where your business could save?
           </h2>
           <div>
-            <CtaPrimary href="/contact">Book a Free Cost Reduction Assessment</CtaPrimary>
+            <CtaPrimary href="/contact?type=customer">Book a Free Cost Reduction Assessment</CtaPrimary>
           </div>
         </div>
       </section>
@@ -166,7 +207,7 @@ export default function HomePage() {
                 solution while you maintain the client relationship.
               </p>
               <Link
-                href="/contact?enq=partner"
+                href="/contact?type=partner"
                 className="inline-flex items-center justify-center min-h-14 px-7 mt-8 rounded-md bg-white text-[#004AAD] text-[17px] font-semibold transition-opacity duration-150 hover:opacity-[0.86]"
               >
                 Partner with AutomateIT &#8594;
@@ -184,7 +225,7 @@ export default function HomePage() {
                   </div>
                   <ul className="list-none m-0 p-0 grid gap-2.5 mt-3.5">
                     {partnerYou.map((p) => (
-                      <li key={p} className="text-[15.5px] leading-[1.4] text-[#EAF4FE]">
+                      <li key={p} className="text-[16px] leading-[1.4] text-[#EAF4FE]">
                         {p}
                       </li>
                     ))}
@@ -203,7 +244,7 @@ export default function HomePage() {
                   </div>
                   <ul className="list-none m-0 p-0 grid gap-2.5 mt-3.5">
                     {partnerUs.map((p) => (
-                      <li key={p} className="text-[15.5px] leading-[1.4] text-[#EAF4FE]">
+                      <li key={p} className="text-[16px] leading-[1.4] text-[#EAF4FE]">
                         {p}
                       </li>
                     ))}
@@ -218,7 +259,7 @@ export default function HomePage() {
               {partnerSupport.map((s) => (
                 <span
                   key={s}
-                  className="text-[14.5px] leading-none px-[13px] py-[9px] border border-white/35 rounded-full text-[#EAF4FE]"
+                  className="text-[15px] leading-none px-[13px] py-2.5 border border-white/35 rounded-full text-[#EAF4FE]"
                 >
                   {s}
                 </span>

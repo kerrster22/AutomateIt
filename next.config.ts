@@ -17,14 +17,18 @@ const isDev = process.env.NODE_ENV === "development";
 // revisiting if that ever changes.
 const cspDirectives = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  // googletagmanager.com is Google Analytics (gtag.js) — only ever loaded
+  // client-side after a visitor accepts the cookie banner, see lib/analytics.ts.
+  `script-src 'self' 'unsafe-inline' https://www.googletagmanager.com${isDev ? " 'unsafe-eval'" : ""}`,
   // Inline `style="..."` attributes are used for the cost-comparison SVG's
   // themed colours, so style-src needs 'unsafe-inline'. Style-only injection
   // is a far smaller risk than script injection.
   `style-src 'self' 'unsafe-inline'`,
   `img-src 'self' data: blob:`,
   `font-src 'self'`,
-  `connect-src 'self'`,
+  // google-analytics.com (and its regional subdomains, e.g. region1.) is
+  // where gtag.js actually sends hits once loaded.
+  `connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com`,
   `object-src 'none'`,
   `base-uri 'self'`,
   `form-action 'self'`,

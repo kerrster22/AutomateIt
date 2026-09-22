@@ -81,7 +81,7 @@ export default function WhatWeDoPage() {
                 <div className="font-display font-bold text-[19px] leading-[1.2] tracking-[-0.024em]">
                   {a.title}
                 </div>
-                <div className="text-[15.5px] leading-[1.55] text-muted">{a.body}</div>
+                <div className="text-[16px] leading-[1.55] text-muted">{a.body}</div>
               </li>
             ))}
           </ol>
@@ -107,7 +107,7 @@ export default function WhatWeDoPage() {
                 <p className="m-0 mb-[18px] text-[16.5px] leading-[1.6] text-muted max-w-[32ch]">{o.body}</p>
                 <div className="grid gap-2.5">
                   {o.points.map((p) => (
-                    <div key={p} className="flex gap-3 items-baseline text-[15.5px] leading-[1.5] text-muted">
+                    <div key={p} className="flex gap-3 items-baseline text-[16px] leading-[1.5] text-muted">
                       <span className="flex-none w-3.5 h-px bg-strong -translate-y-[5px]" />
                       <span>{p}</span>
                     </div>
@@ -139,7 +139,7 @@ export default function WhatWeDoPage() {
                 <h3 className="font-display font-bold text-[22px] tracking-[-0.026em] m-0 mb-2.5">
                   {m.title}
                 </h3>
-                <p className="m-0 mb-4 text-[15.5px] leading-[1.55] text-[#D8EBFB]">{m.body}</p>
+                <p className="m-0 mb-4 text-[16px] leading-[1.55] text-[#D8EBFB]">{m.body}</p>
                 <div className="inline-block border border-white/28 rounded px-2.5 py-1.5 font-mono text-xs tracking-[0.04em] text-[#EAF4FE]">
                   {m.out}
                 </div>
@@ -170,7 +170,7 @@ export default function WhatWeDoPage() {
                   <span className="font-mono text-[11.5px] tracking-[0.08em] text-accent font-medium flex-none">
                     {w.slot}
                   </span>
-                  <span className="text-[15.5px] leading-[1.55] text-muted">{w.note}</span>
+                  <span className="text-[16px] leading-[1.55] text-muted">{w.note}</span>
                 </div>
               ))}
             </div>
@@ -185,7 +185,7 @@ export default function WhatWeDoPage() {
             Find out whether the business case is there.
           </h2>
           <div>
-            <CtaPrimary href="/contact">Book a Free Cost Reduction Assessment</CtaPrimary>
+            <CtaPrimary href="/contact?type=customer">Book a Free Cost Reduction Assessment</CtaPrimary>
           </div>
         </div>
       </section>

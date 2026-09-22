@@ -135,12 +135,29 @@ export const journey = [
   { num: "04", title: "Delivery", body: "Built, deployed and measured against that case." },
 ];
 
+export type UseCaseVideo = {
+  src: string;
+  poster?: string;
+  /** Track file (e.g. .vtt) for captions — keep accessible if a video is added. */
+  captionsSrc?: string;
+};
+
+export type UseCase = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  rows: { label: string; body: string }[];
+  contextLabel: string;
+  /** Optional — a case renders normally with no video when this is absent. */
+  video?: UseCaseVideo;
+};
+
 // The client has not yet supplied the final four use cases — these are the
 // approved placeholder cards, not invented examples. See chats/chat1.md
 // ("USE CASES" section, 2026-09-15 request): "four use cases... clearly
 // replaceable placeholder content... Do not invent customer names,
 // testimonials, percentages, savings or claims."
-export const cases = [1, 2, 3, 4].map((i) => ({
+export const cases: UseCase[] = [1, 2, 3, 4].map((i) => ({
   id: `use-case-0${i}`,
   eyebrow: `Use case 0${i}`,
   title: `Placeholder title ${i}`,
@@ -151,4 +168,5 @@ export const cases = [1, 2, 3, 4].map((i) => ({
     { label: "The result", body: "The measurable operational or financial outcome — to be supplied." },
   ],
   contextLabel: `Use case 0${i}`,
+  // video: { src: "/use-cases/<file>.mp4" } — add per case once supplied.
 }));

@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider, THEME_INIT_SCRIPT } from "@/lib/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { CookieConsent } from "@/components/cookie-consent";
 import { CONTACT_EMAIL, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
 
 const archivo = Archivo({
@@ -106,6 +107,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </div>
           <SiteFooter />
         </ThemeProvider>
+        <CookieConsent />
       </body>
     </html>
   );

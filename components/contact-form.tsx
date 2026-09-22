@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { LinkedInIcon } from "./linkedin-icon";
+import { trackEvent } from "@/lib/analytics";
 
 type EnquiryType = "Customer" | "Partner";
 
@@ -14,7 +16,7 @@ type FormState = {
   message: string;
 };
 
-type Status = "idle" | "sending" | "sent";
+type Status = "idle" | "sending" | "sent" | "error";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -38,6 +40,7 @@ export function ContactForm({
   const [status, setStatus] = useState<Status>("idle");
   const [touched, setTouched] = useState(false);
   const [form, setForm] = useState<FormState>({ name: "", company: "", email: "", message: "" });
+  const [submitError, setSubmitError] = useState("");
   const radioRefs = useRef<Partial<Record<EnquiryType, HTMLButtonElement | null>>>({});
 
   function onRadioKeyDown(e: React.KeyboardEvent<HTMLButtonElement>) {
@@ -71,7 +74,7 @@ export function ContactForm({
 
   const submitLabel = status === "sending" ? "Sending…" : isPartner ? "Send Partner Enquiry" : "Book My Free Assessment";
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errors = errorsFor(form);
     if (errors.name || errors.email || errors.message) {
@@ -81,9 +84,26 @@ export function ContactForm({
     }
     setTouched(true);
     setStatus("sending");
-    // Simulated submission — no backend is wired up yet. Replace with a real
-    // API route (e.g. an email delivery service) when one is available.
-    setTimeout(() => setStatus("sent"), 1300);
+    setSubmitError("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, enq, context }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || "Something went wrong. Please try again.");
+      }
+
+      trackEvent("generate_lead", { enquiry_type: enq });
+      setStatus("sent");
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setStatus("error");
+    }
   }
 
   return (
@@ -142,7 +162,13 @@ export function ContactForm({
             <div className="font-mono text-xs tracking-[0.12em] uppercase text-faint font-medium mb-2">
               LinkedIn
             </div>
-            <a href="#" className="text-[17px] font-medium border-b border-strong pb-0.5 hover:border-ink">
+            <a
+              href="https://www.linkedin.com/company/automate-it-tech/home/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-[17px] font-medium border-b border-strong pb-0.5 hover:border-ink"
+            >
+              <LinkedInIcon />
               Automate It Tech
             </a>
           </div>
@@ -189,9 +215,18 @@ export function ContactForm({
             </div>
           ) : null}
 
+          {status === "error" ? (
+            <div role="alert" className="border border-error rounded px-4 py-3.5 flex gap-3 items-start">
+              <span aria-hidden="true" className="font-mono text-sm text-error font-medium">
+                !
+              </span>
+              <span className="text-base leading-[1.5] text-error">{submitError}</span>
+            </div>
+          ) : null}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-[18px]">
             <label className="grid gap-2">
-              <span className="text-[14.5px] font-semibold">
+              <span className="text-[16px] font-semibold">
                 Name <span aria-hidden="true" className="text-accent">*</span>
               </span>
               <input
@@ -208,7 +243,7 @@ export function ContactForm({
                 }`}
               />
               {nameInvalid ? (
-                <span className="flex gap-2 items-baseline text-[14.5px] text-error">
+                <span className="flex gap-2 items-baseline text-[16px] text-error">
                   <span aria-hidden="true" className="font-mono">
                     !
                   </span>
@@ -217,7 +252,7 @@ export function ContactForm({
               ) : null}
             </label>
             <label className="grid gap-2">
-              <span className="text-[14.5px] font-semibold">Company</span>
+              <span className="text-[16px] font-semibold">Company</span>
               <input
                 type="text"
                 name="company"
@@ -231,7 +266,7 @@ export function ContactForm({
           </div>
 
           <label className="grid gap-2">
-            <span className="text-[14.5px] font-semibold">
+            <span className="text-[16px] font-semibold">
               Email <span aria-hidden="true" className="text-accent">*</span>
             </span>
             <input
@@ -248,7 +283,7 @@ export function ContactForm({
               }`}
             />
             {emailInvalid ? (
-              <span className="flex gap-2 items-baseline text-[14.5px] text-error">
+              <span className="flex gap-2 items-baseline text-[16px] text-error">
                 <span aria-hidden="true" className="font-mono">
                   !
                 </span>
@@ -258,7 +293,7 @@ export function ContactForm({
           </label>
 
           <fieldset className="border-0 p-0 m-0 grid gap-3">
-            <legend className="p-0 text-[14.5px] font-semibold">I am a</legend>
+            <legend className="p-0 text-[16px] font-semibold">I am a</legend>
             <div role="radiogroup" aria-label="I am a" className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {ENQUIRY_TYPES.map((o) => {
                 const active = enq === o;
@@ -274,7 +309,7 @@ export function ContactForm({
                     role="radio"
                     aria-checked={active}
                     tabIndex={active ? 0 : -1}
-                    className={`flex items-center gap-3 text-left cursor-pointer min-h-14 px-4 rounded border text-ink text-base font-medium transition-colors duration-150 hover:border-ink ${
+                    className={`flex items-center gap-3 text-left cursor-pointer min-h-16 px-4 py-2.5 rounded border text-ink transition-colors duration-150 hover:border-ink ${
                       active ? "border-accent bg-tint" : "border-line bg-bg"
                     }`}
                   >
@@ -285,7 +320,12 @@ export function ContactForm({
                     >
                       {active ? <span className="w-2.5 h-2.5 rounded-full bg-accent" /> : null}
                     </span>
-                    <span>{o}</span>
+                    <span className="grid gap-0.5">
+                      <span className="text-base font-semibold">{o === "Customer" ? "Customer / Client" : o}</span>
+                      <span className="text-[14.5px] text-muted font-normal">
+                        {o === "Customer" ? "Looking to reduce costs in my business" : "Looking to deliver automation to my clients"}
+                      </span>
+                    </span>
                   </button>
                 );
               })}
@@ -293,7 +333,7 @@ export function ContactForm({
           </fieldset>
 
           <label className="grid gap-2">
-            <span className="text-[14.5px] font-semibold">
+            <span className="text-[16px] font-semibold">
               Message <span aria-hidden="true" className="text-accent">*</span>
             </span>
             <textarea
@@ -309,7 +349,7 @@ export function ContactForm({
               }`}
             />
             {messageInvalid ? (
-              <span className="flex gap-2 items-baseline text-[14.5px] text-error">
+              <span className="flex gap-2 items-baseline text-[16px] text-error">
                 <span aria-hidden="true" className="font-mono">
                   !
                 </span>
@@ -317,6 +357,10 @@ export function ContactForm({
               </span>
             ) : null}
           </label>
+
+          <p className="m-0 text-[16px] leading-[1.5] text-muted">
+            We aim to respond to enquiries within 24 hours.
+          </p>
 
           <div className="flex flex-wrap gap-4 items-center">
             <button
@@ -329,10 +373,10 @@ export function ContactForm({
             >
               {submitLabel}
             </button>
-            <span className="font-mono text-xs tracking-[0.06em] text-faint">* Required</span>
+            <span className="font-mono text-[13px] tracking-[0.06em] text-faint">* Required</span>
           </div>
 
-          <p className="m-0 text-[14.5px] leading-[1.6] text-muted max-w-[62ch]">
+          <p className="m-0 text-[16px] leading-[1.6] text-muted max-w-[62ch]">
             We&rsquo;ll use your details to respond to your enquiry and handle them in accordance with our{" "}
             <Link href="/privacy" className="font-semibold text-accent border-b border-strong hover:border-accent">
               Privacy Policy

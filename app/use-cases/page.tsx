@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { CtaPrimary } from "@/components/cta";
+import { UseCaseVideoPlayer } from "@/components/use-case-video";
 import { cases, journey } from "@/lib/site-data";
 
 export const metadata: Metadata = {
@@ -50,6 +50,7 @@ export default function UseCasesPage() {
                 </div>
                 <h2 className="font-display font-bold text-[27px] tracking-[-0.03em] m-0 mt-3">{c.title}</h2>
               </div>
+              <UseCaseVideoPlayer video={c.video} title={c.title} />
               <div className="grid border-t border-line">
                 {c.rows.map((r) => (
                   <div key={r.label} className="py-4 border-b border-line">
@@ -63,34 +64,19 @@ export default function UseCasesPage() {
                   <div className="font-mono text-xs tracking-[0.12em] uppercase text-faint font-medium mb-[7px]">
                     Proof / example
                   </div>
-                  <div className="text-[15.5px] leading-[1.55] text-faint border border-dashed border-strong rounded px-3 py-2.5">
+                  <div className="text-[16px] leading-[1.55] text-faint border border-dashed border-strong rounded px-3 py-2.5">
                     Awaiting client-verified example. No figures shown until confirmed.
                   </div>
                 </div>
               </div>
               <Link
-                href={`/contact?context=${encodeURIComponent(c.contextLabel)}`}
+                href={`/contact?type=customer&context=${encodeURIComponent(c.contextLabel)}`}
                 className="inline-flex items-center gap-2.5 min-h-11 mt-auto text-base font-semibold text-accent hover:text-ink"
               >
                 Talk to us about this <span aria-hidden="true" className="font-mono">&#8594;</span>
               </Link>
             </article>
           ))}
-        </div>
-      </section>
-
-      {/* Cost comparison */}
-      <section className="border-t border-border bg-alt">
-        <div className="max-w-[1180px] mx-auto px-[clamp(18px,3vw,28px)] py-[clamp(56px,7vw,88px)]">
-          <div className="border border-line rounded overflow-hidden bg-card">
-            <Image
-              src="/AutomateIT_Cost_Comparison.png"
-              alt="A lower-cost route to automation: AutomateIT avoids much of the licence and development overhead associated with traditional RPA."
-              width={2520}
-              height={1440}
-              className="w-full h-auto"
-            />
-          </div>
         </div>
       </section>
 
@@ -110,7 +96,7 @@ export default function UseCasesPage() {
                   {j.num}
                 </div>
                 <h3 className="font-display font-bold text-xl tracking-[-0.024em] m-0 mb-2">{j.title}</h3>
-                <p className="m-0 text-[15.5px] leading-[1.55] text-muted max-w-[30ch]">{j.body}</p>
+                <p className="m-0 text-[16px] leading-[1.55] text-muted max-w-[30ch]">{j.body}</p>
               </div>
             ))}
           </div>
@@ -124,7 +110,7 @@ export default function UseCasesPage() {
             Tell us about your process.
           </h2>
           <div>
-            <CtaPrimary href="/contact">Book a Free Cost Reduction Assessment</CtaPrimary>
+            <CtaPrimary href="/contact?type=customer">Book a Free Cost Reduction Assessment</CtaPrimary>
           </div>
         </div>
       </section>
