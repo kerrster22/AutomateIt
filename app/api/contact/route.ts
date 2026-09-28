@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { ConfidentialClientApplication } from "@azure/msal-node";
+import { clientIp, isRateLimited } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const MIN_FILL_TIME_MS = 5000;
 
 type ContactPayload = {
   name?: string;
@@ -12,6 +14,10 @@ type ContactPayload = {
   enq?: string;
   context?: string;
   message?: string;
+  // Bot-detection fields, not real contact data — see the honeypot/timing
+  // check below.
+  website?: string;
+  renderedAt?: number;
 };
 
 function escapeHtml(value: string) {
@@ -68,11 +74,31 @@ async function sendMail(accessToken: string, emailUser: string, message: Record<
 }
 
 export async function POST(req: Request) {
+  if (isRateLimited(clientIp(req))) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+  }
+
   let payload: ContactPayload;
   try {
     payload = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  // Honeypot + minimum-fill-time bot check. A real visitor never sees or
+  // fills the "website" field (hidden from sighted and screen-reader users
+  // alike — see the form). 5 seconds is safe even with browser autofill:
+  // autofill can populate name/email/company instantly, but the message
+  // field still requires genuinely typing a real sentence, which autofill
+  // can't do. Bots that skip the page's JS entirely and POST straight to
+  // this route won't have a plausible `renderedAt` either, so they're still
+  // caught. Respond as if it succeeded either way, so scripted submitters
+  // get no signal that they were caught rather than genuinely delivered.
+  const isHoneypotFilled = Boolean(payload.website?.trim());
+  const filledTooFast =
+    typeof payload.renderedAt === "number" && Date.now() - payload.renderedAt < MIN_FILL_TIME_MS;
+  if (isHoneypotFilled || filledTooFast) {
+    return NextResponse.json({ message: "Enquiry sent" });
   }
 
   const name = payload.name?.trim() ?? "";
@@ -82,7 +108,17 @@ export async function POST(req: Request) {
   const enq = payload.enq === "Partner" ? "Partner" : "Customer";
   const context = payload.context?.trim() ?? "";
 
-  if (!name || !EMAIL_RE.test(email) || message.length < 10) {
+  if (
+    !name ||
+    name.length > 200 ||
+    company.length > 200 ||
+    !email ||
+    email.length > 320 ||
+    !EMAIL_RE.test(email) ||
+    message.length < 10 ||
+    message.length > 5000 ||
+    context.length > 200
+  ) {
     return NextResponse.json({ error: "Missing or invalid fields" }, { status: 400 });
   }
 
@@ -182,7 +218,7 @@ export async function POST(req: Request) {
           subject: "Thanks for your interest in partnering with AutomateIT",
           headerTitle: "Let’s grow together.",
           intro: paragraph(
-            `Hi ${safeName},<br /><br />Thanks for your interest in partnering with AutomateIT. We&rsquo;ve received your enquiry and aim to respond within 24 hours to talk through bringing managed automation to your clients, with AutomateIT handling the delivery.`
+            `Hi ${safeName},<br /><br />Thanks for your interest in partnering with AutomateIT. We&rsquo;ve received your enquiry and aim to respond within 24 hours to talk through bringing managed automation to your clients.`
           ),
         }
       : {

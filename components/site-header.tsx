@@ -22,6 +22,7 @@ export function SiteHeader() {
           aria-label="AutomateIT — home"
           className="flex-none"
           onClick={() => setMenuOpen(false)}
+          prefetch={false}
         >
           <LogoMark variant="header" />
         </Link>
@@ -37,6 +38,7 @@ export function SiteHeader() {
                 key={n.href}
                 href={n.href}
                 aria-current={active ? "page" : undefined}
+                prefetch={false}
                 className={`relative flex items-center min-h-11 py-[26px] whitespace-nowrap text-[16px] ${
                   active ? "font-semibold" : "font-medium"
                 } text-ink transition-opacity duration-150 hover:opacity-60`}
@@ -82,6 +84,7 @@ export function SiteHeader() {
           </div>
           <Link
             href="/contact?type=customer"
+            prefetch={false}
             className="inline-flex items-center min-h-11 px-5 rounded-md bg-btn text-btnink text-[16px] font-semibold whitespace-nowrap transition-opacity duration-150 hover:opacity-[0.86]"
           >
             Book an assessment
@@ -92,6 +95,7 @@ export function SiteHeader() {
         <div className="flex md:hidden items-center gap-2">
           <Link
             href="/contact?type=customer"
+            prefetch={false}
             className="inline-flex items-center min-h-11 px-[15px] rounded-md bg-btn text-btnink text-[16px] font-semibold"
           >
             Book
@@ -124,6 +128,7 @@ export function SiteHeader() {
                   href={n.href}
                   aria-current={active ? "page" : undefined}
                   onClick={() => setMenuOpen(false)}
+                  prefetch={false}
                   className={`flex items-center justify-between min-h-14 border-b border-border text-lg ${
                     active ? "font-semibold" : "font-medium"
                   }`}

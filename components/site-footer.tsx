@@ -21,6 +21,7 @@ export function SiteFooter() {
             <Link
               key={n.href}
               href={n.href}
+              prefetch={false}
               className="inline-flex items-center min-h-10 text-[16px] text-muted transition-colors duration-150 hover:text-ink"
             >
               {n.label}
@@ -53,12 +54,14 @@ export function SiteFooter() {
           </div>
           <Link
             href="/privacy"
+            prefetch={false}
             className="inline-flex items-center min-h-10 text-[16px] text-muted transition-colors duration-150 hover:text-ink"
           >
             Privacy Policy
           </Link>
           <Link
             href="/cookies"
+            prefetch={false}
             className="inline-flex items-center min-h-10 text-[16px] text-muted transition-colors duration-150 hover:text-ink"
           >
             Cookie Preferences

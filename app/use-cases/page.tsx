@@ -19,19 +19,12 @@ export default function UseCasesPage() {
   return (
     <main>
       <section className="max-w-[1180px] mx-auto px-[clamp(18px,3vw,28px)] pt-[clamp(64px,9vw,112px)] pb-[clamp(40px,5vw,60px)]">
-        <div className="flex flex-wrap gap-3.5 items-baseline justify-between">
-          <div>
-            <div className="font-mono text-[12.5px] tracking-[0.12em] uppercase text-accent font-medium mb-[26px]">
-              Use cases
-            </div>
-            <h1 className="font-display font-extrabold text-[clamp(36px,5.6vw,72px)] leading-[0.99] tracking-[-0.04em] m-0 max-w-[18ch] text-balance">
-              Where the savings actually come from.
-            </h1>
-          </div>
-          <span className="font-mono text-[11.5px] tracking-[0.06em] text-faint border border-dashed border-strong rounded px-2.5 py-1.5">
-            Four cases to be confirmed by client
-          </span>
+        <div className="font-mono text-[12.5px] tracking-[0.12em] uppercase text-accent font-medium mb-[26px]">
+          Use cases
         </div>
+        <h1 className="font-display font-extrabold text-[clamp(36px,5.6vw,72px)] leading-[0.99] tracking-[-0.04em] m-0 max-w-[18ch] text-balance">
+          Where the savings actually come from.
+        </h1>
         <p className="mt-[clamp(24px,3vw,32px)] mb-0 text-[17.5px] leading-[1.6] text-muted max-w-[52ch] text-pretty">
           Each case sets out who it is for, the problem, the solution and the measurable result.
         </p>
@@ -64,13 +57,16 @@ export default function UseCasesPage() {
                   <div className="font-mono text-xs tracking-[0.12em] uppercase text-faint font-medium mb-[7px]">
                     Proof / example
                   </div>
-                  <div className="text-[16px] leading-[1.55] text-faint border border-dashed border-strong rounded px-3 py-2.5">
-                    Awaiting client-verified example. No figures shown until confirmed.
-                  </div>
+                  <ul className="m-0 pl-5 grid gap-1.5 list-disc marker:text-strong text-[15.5px] leading-[1.5] text-muted">
+                    {c.proof.map((p) => (
+                      <li key={p}>{p}</li>
+                    ))}
+                  </ul>
                 </div>
               </div>
               <Link
                 href={`/contact?type=customer&context=${encodeURIComponent(c.contextLabel)}`}
+                prefetch={false}
                 className="inline-flex items-center gap-2.5 min-h-11 mt-auto text-base font-semibold text-accent hover:text-ink"
               >
                 Talk to us about this <span aria-hidden="true" className="font-mono">&#8594;</span>

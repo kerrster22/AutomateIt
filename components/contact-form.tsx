@@ -41,6 +41,11 @@ export function ContactForm({
   const [touched, setTouched] = useState(false);
   const [form, setForm] = useState<FormState>({ name: "", company: "", email: "", message: "" });
   const [submitError, setSubmitError] = useState("");
+  const [honeypot, setHoneypot] = useState("");
+  // Captured once, when the form first renders — the server rejects any
+  // submission that arrives less than 5 seconds after this, since that's too
+  // fast for a real person to have filled the form in.
+  const [renderedAt] = useState(() => Date.now());
   const radioRefs = useRef<Partial<Record<EnquiryType, HTMLButtonElement | null>>>({});
 
   function onRadioKeyDown(e: React.KeyboardEvent<HTMLButtonElement>) {
@@ -90,7 +95,7 @@ export function ContactForm({
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, enq, context }),
+        body: JSON.stringify({ ...form, enq, context, website: honeypot, renderedAt }),
       });
 
       if (!res.ok) {
@@ -193,6 +198,7 @@ export function ContactForm({
           </p>
           <Link
             href="/"
+            prefetch={false}
             className="inline-flex items-center justify-center min-h-[52px] px-[26px] rounded-md border border-strong text-base font-semibold hover:border-ink"
           >
             Return home
@@ -202,8 +208,25 @@ export function ContactForm({
         <form
           onSubmit={onSubmit}
           noValidate
+          autoComplete="off"
           className="border border-border rounded bg-card px-[clamp(22px,3vw,32px)] pt-[clamp(26px,4vw,36px)] pb-[clamp(28px,4vw,38px)] grid gap-[22px]"
         >
+          {/* Honeypot — invisible to sighted and screen-reader users alike,
+              but a generic form-filling bot will find and fill it. Any value
+              here means it wasn't a real visitor. */}
+          <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
+            <label htmlFor="website">Website</label>
+            <input
+              type="text"
+              id="website"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+            />
+          </div>
+
           {anyInvalid ? (
             <div role="alert" className="border border-error rounded px-4 py-3.5 flex gap-3 items-start">
               <span aria-hidden="true" className="font-mono text-sm text-error font-medium">
@@ -378,7 +401,7 @@ export function ContactForm({
 
           <p className="m-0 text-[16px] leading-[1.6] text-muted max-w-[62ch]">
             We&rsquo;ll use your details to respond to your enquiry and handle them in accordance with our{" "}
-            <Link href="/privacy" className="font-semibold text-accent border-b border-strong hover:border-accent">
+            <Link href="/privacy" prefetch={false} className="font-semibold text-accent border-b border-strong hover:border-accent">
               Privacy Policy
             </Link>
             .

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { CtaPrimary } from "@/components/cta";
-import { approach, method, offers, whySlots } from "@/lib/site-data";
+import { approach, method, offers, whySlots, whyStatement } from "@/lib/site-data";
 
 export const metadata: Metadata = {
   title: "What We Do",
@@ -156,14 +156,9 @@ export default function WhatWeDoPage() {
             <h2 className="font-display font-extrabold text-[clamp(26px,3vw,36px)] tracking-[-0.032em] m-0">
               Why AutomateIT
             </h2>
-            <span className="font-mono text-[11.5px] tracking-[0.06em] text-faint border border-dashed border-strong rounded px-2.5 py-1.5">
-              Client content to follow
-            </span>
           </div>
           <div className="border border-line rounded bg-card p-[clamp(28px,4vw,44px)] grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-[clamp(24px,3vw,44px)] items-start">
-            <p className="m-0 text-[17.5px] leading-[1.6] max-w-[34ch] text-pretty">
-              Space reserved for the client&rsquo;s own positioning statement and supporting image.
-            </p>
+            <p className="m-0 text-[17.5px] leading-[1.6] max-w-[38ch] text-pretty">{whyStatement}</p>
             <div className="grid gap-3.5">
               {whySlots.map((w) => (
                 <div key={w.slot} className="flex gap-3.5 items-baseline pb-3.5 border-b border-border">

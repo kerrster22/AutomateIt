@@ -29,6 +29,7 @@ export default function HomePage() {
               <CtaPrimary href="/contact?type=customer">Book a Free Cost Reduction Assessment</CtaPrimary>
               <Link
                 href="/#how-it-works"
+                prefetch={false}
                 className="inline-flex items-center justify-center min-h-14 px-7 rounded-md border border-white/50 text-white text-[17px] font-semibold bg-white/10 backdrop-blur-sm transition-colors duration-150 hover:bg-white/20"
               >
                 See How It Works
@@ -208,6 +209,7 @@ export default function HomePage() {
               </p>
               <Link
                 href="/contact?type=partner"
+                prefetch={false}
                 className="inline-flex items-center justify-center min-h-14 px-7 mt-8 rounded-md bg-white text-[#004AAD] text-[17px] font-semibold transition-opacity duration-150 hover:opacity-[0.86]"
               >
                 Partner with AutomateIT &#8594;
