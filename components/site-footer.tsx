@@ -10,7 +10,7 @@ export function SiteFooter() {
         <div>
           <LogoMark variant="footer" />
           <p className="mt-4 text-[16px] leading-[1.6] text-muted max-w-[28ch]">
-            Business improvement first. Automation where it earns its place.
+            Delivering subscription-based automation solutions tailored to your business needs.
           </p>
         </div>
         <div className="grid gap-1 content-start">
@@ -45,7 +45,7 @@ export function SiteFooter() {
             className="inline-flex items-center gap-2 min-h-10 text-[16px] text-muted transition-colors duration-150 hover:text-ink"
           >
             <LinkedInIcon />
-            Automate It Tech — LinkedIn
+            AutomateIt — LinkedIn
           </a>
         </div>
         <div className="grid gap-1 content-start">
