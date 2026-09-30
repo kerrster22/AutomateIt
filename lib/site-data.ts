@@ -20,21 +20,21 @@ export const benefits = [
 export const stages = [
   {
     num: "01",
-    title: "Ideation",
+    title: "Realisation (AI, Automation) Ideation",
     body: "Discover, prioritise and prove the value.",
     principle: "Start with the business case, not the technology.",
     hue: "#004AAD",
   },
   {
     num: "02",
-    title: "Automation",
+    title: "Intelligent Automation",
     body: "Build, deploy and scale.",
     principle: "Turn the opportunity into a working solution.",
     hue: "#308CE0",
   },
   {
     num: "03",
-    title: "Trust",
+    title: "Trust/Tackling Fraud",
     body: "Governance, guardrails and assurance.",
     principle: "Build trust into the solution.",
     hue: "#8BCFFE",
@@ -98,7 +98,7 @@ export const approach = [
 
 export const offers = [
   {
-    title: "Ideation",
+    title: "Realisation (AI, Automation) Ideation",
     body: "Capture, evaluate and prioritise opportunities.",
     points: ["Process review workshops", "Opportunity scoring", "Savings estimate"],
   },
@@ -109,7 +109,7 @@ export const offers = [
   },
   {
     title: "Trust",
-    body: "Security, governance, compliance and data protection.",
+    body: " Counter Fraud, governance, compliance and data protection.",
     points: ["Access and audit controls", "Compliance alignment", "Monitoring and assurance"],
   },
 ];
@@ -159,6 +159,8 @@ export type UseCase = {
   id: string;
   eyebrow: string;
   title: string;
+  /** Optional — where the client is based, shown alongside the title. */
+  location?: string;
   rows: { label: string; body: string }[];
   /** Concrete measurable outcomes, shown under "Proof / example". */
   proof: string[];
@@ -174,6 +176,7 @@ export const cases: UseCase[] = [
     id: "use-case-01",
     eyebrow: "Use case 01",
     title: "A catering supplies company",
+    location: "UK",
     contextLabel: "Invoice processing automation",
     rows: [
       {
@@ -204,6 +207,7 @@ export const cases: UseCase[] = [
     id: "use-case-02",
     eyebrow: "Use case 02",
     title: "An insurance company",
+    location: "Dubai, UAE",
     contextLabel: "Insurance claims automation",
     rows: [
       {
@@ -236,6 +240,7 @@ export const cases: UseCase[] = [
     id: "use-case-03",
     eyebrow: "Use case 03",
     title: "A recruitment consultant and head-hunting company",
+    location: "UK / Ireland",
     contextLabel: "Recruitment & candidate processing automation",
     rows: [
       {
@@ -266,6 +271,7 @@ export const cases: UseCase[] = [
     id: "use-case-04",
     eyebrow: "Use case 04",
     title: "An accountancy company",
+    location: "EU / UK",
     contextLabel: "Tax return preparation automation",
     rows: [
       {
@@ -291,6 +297,39 @@ export const cases: UseCase[] = [
       "Manual calculation errors substantially reduced",
       "Lower risk of missed deadlines and penalties",
       "Digital records and submissions aligned with HMRC's Making Tax Digital requirements — MTD for Income Tax applies from April 2026 to qualifying sole traders and landlords with self-employment and property income over £50,000",
+    ],
+  },
+  {
+    id: "use-case-05",
+    eyebrow: "Use case 05",
+    title: "A European airline",
+    contextLabel: "Document verification automation",
+    rows: [
+      {
+        label: "Who it's for",
+        body: "A European airline receiving thousands of documents supporting flight-delay claims, lost-baggage compensation and internal HR checks.",
+      },
+      {
+        label: "The problem",
+        body: "Manually reviewing every document made it difficult to identify altered, fabricated or AI-generated evidence.",
+      },
+      {
+        label: "The solution",
+        body: "Automated document verification analysed 45,000 documents and images in just three days, highlighting suspicious claims and compliance risks for human investigation.",
+      },
+      {
+        label: "The result",
+        body: "Suspicious claims and forged documents are now surfaced automatically, giving investigators clear leads while strengthening fraud prevention and HR compliance.",
+      },
+    ],
+    proof: [
+      "Analysed 45,000 documents and images in three days",
+      "Detected false receipts submitted for flight-delay expenses",
+      "Identified AI-generated receipts used in lost-baggage claims",
+      "Flagged forged right-to-work documents and fraudulent sick notes",
+      "Reduced the risk of fraudulent compensation payments",
+      "Strengthened HR compliance and internal controls",
+      "Enabled document verification at a scale impossible through manual review alone",
     ],
   },
 ];

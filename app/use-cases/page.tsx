@@ -38,8 +38,15 @@ export default function UseCasesPage() {
               className="border border-border rounded bg-card px-[clamp(24px,3vw,32px)] pt-[clamp(26px,3vw,34px)] pb-7 flex flex-col gap-5 transition-colors duration-200 hover:border-strong"
             >
               <div>
-                <div className="font-mono text-xs tracking-[0.1em] uppercase text-accent font-medium">
-                  {c.eyebrow}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="font-mono text-xs tracking-[0.1em] uppercase text-accent font-medium">
+                    {c.eyebrow}
+                  </div>
+                  {c.location && (
+                    <div className="font-mono text-xs tracking-[0.1em] uppercase text-faint font-medium">
+                      {c.location}
+                    </div>
+                  )}
                 </div>
                 <h2 className="font-display font-bold text-[27px] tracking-[-0.03em] m-0 mt-3">{c.title}</h2>
               </div>
