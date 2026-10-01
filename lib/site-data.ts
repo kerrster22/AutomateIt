@@ -82,10 +82,10 @@ export const partnerSupport = [
 ];
 
 export const cost = [
-  { letter: "C", word: "Capture", body: "Understand processes." },
+  { letter: "C", word: "Capture", body: "Discover and understand." },
   { letter: "O", word: "Optimise", body: "Identify inefficiencies." },
-  { letter: "S", word: "Simplify", body: "Remove manual effort through intelligent automation." },
-  { letter: "T", word: "Transform", body: "Deliver measurable business improvement." },
+  { letter: "S", word: "Simplify", body: "Remove manual effort." },
+  { letter: "T", word: "Transform", body: "Deliver business improvement." },
 ];
 
 export const approach = [

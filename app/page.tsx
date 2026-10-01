@@ -94,10 +94,10 @@ export default function HomePage() {
           </p>
           <div className="border border-line rounded overflow-hidden bg-card">
             <Image
-              src="/AutomateIT_Cost_Comparison.png"
-              alt="A lower-cost route to automation: AutomateIT avoids much of the licence and development overhead associated with traditional RPA."
-              width={2520}
-              height={1440}
+              src="/AutomateITgraph.png"
+              alt="USD 216k saved over 3 years across three processes. With AutomateIT you keep USD 167k after USD 49k in fees; with traditional RPA you keep USD 25k after USD 191k in licence costs."
+              width={1280}
+              height={721}
               className="w-full h-auto"
             />
           </div>

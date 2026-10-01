@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { CtaPrimary } from "@/components/cta";
-import { approach, method, offers, whySlots, whyStatement } from "@/lib/site-data";
+import { approach, cost, method, offers, whySlots, whyStatement } from "@/lib/site-data";
 
 export const metadata: Metadata = {
   title: "What We Do",
@@ -45,15 +44,42 @@ export default function WhatWeDoPage() {
             Our COST framework is how we get from a vague sense of inefficiency to a defensible business
             case.
           </p>
-          <div className="border border-line rounded overflow-hidden bg-card">
-            <Image
-              src="/COST Image.jpg"
-              alt="COST framework: Capture, Optimise, Simplify, Transform"
-              width={1160}
-              height={397}
-              className="w-full h-auto"
-            />
-          </div>
+          <ol
+            aria-label="COST framework"
+            className="list-none m-0 p-0 grid grid-cols-1 min-[560px]:grid-cols-2 min-[820px]:grid-cols-4 gap-px bg-line border border-line rounded overflow-hidden"
+          >
+            {cost.map((c, i) => (
+              <li
+                key={c.letter}
+                className="group relative bg-card px-[clamp(22px,2.4vw,30px)] pt-[clamp(26px,3vw,36px)] pb-[clamp(28px,3vw,38px)] grid grid-cols-[auto_minmax(0,1fr)] min-[560px]:grid-cols-1 gap-x-5 gap-y-4 content-start items-center min-[560px]:items-start transition-colors hover:bg-tint"
+              >
+                {/* Progress bar: fills one more segment per stage, C → T */}
+                <div aria-hidden="true" className="col-span-full flex gap-1.5 mb-1 min-[560px]:mb-2">
+                  {cost.map((_, j) => (
+                    <span
+                      key={j}
+                      className={`h-[3px] flex-1 rounded-full ${j <= i ? "bg-accent" : "bg-border"}`}
+                    />
+                  ))}
+                </div>
+                <span
+                  aria-hidden="true"
+                  className="font-display font-extrabold text-[clamp(56px,6vw,88px)] leading-[0.9] tracking-tighter text-accent transition-transform duration-300 group-hover:-translate-y-0.5"
+                >
+                  {c.letter}
+                </span>
+                <div className="grid gap-2">
+                  <span className="font-mono text-[12.5px] tracking-[0.14em] uppercase text-faint font-medium">
+                    0{i + 1}
+                  </span>
+                  <h3 className="font-display font-bold text-[clamp(20px,1.9vw,23px)] leading-[1.15] tracking-[-0.024em] m-0 uppercase">
+                    {c.word}
+                  </h3>
+                  <p className="m-0 text-[16px] leading-[1.55] text-muted">{c.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
