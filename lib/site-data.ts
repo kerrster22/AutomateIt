@@ -175,7 +175,7 @@ export const cases: UseCase[] = [
   {
     id: "use-case-01",
     eyebrow: "Use case 01",
-    title: "A catering supplies company",
+    title: "A UK-based catering supplies company",
     location: "UK",
     contextLabel: "Invoice processing automation",
     rows: [
@@ -206,7 +206,7 @@ export const cases: UseCase[] = [
   {
     id: "use-case-02",
     eyebrow: "Use case 02",
-    title: "An insurance company",
+    title: "A Dubai-based insurance company",
     location: "Dubai, UAE",
     contextLabel: "Insurance claims automation",
     rows: [
@@ -239,7 +239,7 @@ export const cases: UseCase[] = [
   {
     id: "use-case-03",
     eyebrow: "Use case 03",
-    title: "A recruitment consultant and head-hunting company",
+    title: "A UK and Ireland-based recruitment consultant and head-hunting company",
     location: "UK / Ireland",
     contextLabel: "Recruitment & candidate processing automation",
     rows: [
@@ -270,7 +270,7 @@ export const cases: UseCase[] = [
   {
     id: "use-case-04",
     eyebrow: "Use case 04",
-    title: "An accountancy company",
+    title: "An EU and UK-based accountancy company",
     location: "EU / UK",
     contextLabel: "Tax return preparation automation",
     rows: [
