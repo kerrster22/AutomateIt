@@ -70,6 +70,9 @@ export function SiteFooter() {
       </div>
       <div className="max-w-[1180px] mx-auto px-[clamp(18px,3vw,28px)] pt-5 pb-9 border-t border-border flex flex-wrap gap-3 justify-between items-center text-sm text-faint">
         <span>© 2026 AutomateIT</span>
+        <span className="max-w-[70ch] md:text-right">
+          AUTOMATEIT LTD · Company number 17510015 · Registered office: Unit 7, E-Space North, 181 Wisbech Road, Littleport, Cambridgeshire, CB6 1RA
+        </span>
       </div>
     </footer>
   );
