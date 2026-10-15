@@ -20,6 +20,8 @@ type Status = "idle" | "sending" | "sent" | "error";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+const CONTACT_EMAIL = "info@automateit.tech";
+
 function errorsFor(f: FormState) {
   return {
     name: !f.name.trim(),
@@ -42,10 +44,25 @@ export function ContactForm({
   const [form, setForm] = useState<FormState>({ name: "", company: "", email: "", message: "" });
   const [submitError, setSubmitError] = useState("");
   const [honeypot, setHoneypot] = useState("");
-  // Captured once, when the form first renders — the server rejects any
-  // submission that arrives less than 5 seconds after this, since that's too
-  // fast for a real person to have filled the form in.
-  const [renderedAt] = useState(() => Date.now());
+  const [copied, setCopied] = useState(false);
+  // Captured once, when the form first renders. On submit we send only the
+  // elapsed time (both ends read from this browser's clock), and the server
+  // rejects anything under 5 seconds as too fast for a real person. Sending
+  // a raw timestamp instead would compare the visitor's clock with the
+  // server's, and a device clock running fast would look like a bot.
+  // performance.now() is monotonic, so even an OS clock re-sync mid-fill
+  // can't skew it.
+  const [renderedAt] = useState(() => performance.now());
+
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(CONTACT_EMAIL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard unavailable — the address is still visible to copy by hand.
+    }
+  }
   const radioRefs = useRef<Partial<Record<EnquiryType, HTMLButtonElement | null>>>({});
 
   function onRadioKeyDown(e: React.KeyboardEvent<HTMLButtonElement>) {
@@ -91,24 +108,34 @@ export function ContactForm({
     setStatus("sending");
     setSubmitError("");
 
+    let res: Response;
     try {
-      const res = await fetch("/api/contact", {
+      res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, enq, context, website: honeypot, renderedAt }),
+        body: JSON.stringify({ ...form, enq, context, hp: honeypot, elapsedMs: Math.round(performance.now() - renderedAt) }),
       });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error || "Something went wrong. Please try again.");
-      }
-
-      trackEvent("generate_lead", { enquiry_type: enq });
-      setStatus("sent");
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } catch {
+      // Never reached the server — offline, VPN/firewall, or a browser
+      // extension blocking the request.
+      setSubmitError(
+        `We couldn't reach our server. Please check your connection and try again, or email us at ${CONTACT_EMAIL}.`
+      );
       setStatus("error");
+      return;
     }
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      const message = data?.error || `Something went wrong. Please try again, or email us at ${CONTACT_EMAIL}.`;
+      // The ref matches the server's log lines for this request in Vercel.
+      setSubmitError(data?.ref ? `${message} (Ref: ${data.ref})` : `${message} (Status ${res.status})`);
+      setStatus("error");
+      return;
+    }
+
+    trackEvent("generate_lead", { enquiry_type: enq });
+    setStatus("sent");
   }
 
   return (
@@ -156,12 +183,24 @@ export function ContactForm({
             <div className="font-mono text-xs tracking-[0.12em] uppercase text-faint font-medium mb-2">
               Email
             </div>
-            <a
-              href="mailto:info@automateit.tech"
-              className="text-[17px] font-medium border-b border-strong pb-0.5 hover:border-ink"
-            >
-              info@automateit.tech
-            </a>
+            {/* On a Mac with no account set up in Apple Mail, the mailto link
+                just shows a "set up a mail account" prompt — so offer a copy
+                button too. */}
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="text-[17px] font-medium border-b border-strong pb-0.5 hover:border-ink"
+              >
+                {CONTACT_EMAIL}
+              </a>
+              <button
+                type="button"
+                onClick={copyEmail}
+                className="inline-flex items-center min-h-8 px-2.5 rounded border border-line bg-transparent cursor-pointer text-sm text-muted hover:border-ink"
+              >
+                <span aria-live="polite">{copied ? "Copied" : "Copy"}</span>
+              </button>
+            </div>
           </div>
           <div className="py-5">
             <div className="font-mono text-xs tracking-[0.12em] uppercase text-faint font-medium mb-2">
@@ -207,21 +246,32 @@ export function ContactForm({
       ) : (
         <form
           onSubmit={onSubmit}
+          // If the page's JavaScript fails to load, the browser submits the
+          // form natively — POST keeps the visitor's details out of the URL
+          // (a GET would put name/email/message in the address bar and logs).
+          method="post"
           noValidate
           autoComplete="off"
           className="border border-border rounded bg-card px-[clamp(22px,3vw,32px)] pt-[clamp(26px,4vw,36px)] pb-[clamp(28px,4vw,38px)] grid gap-[22px]"
         >
           {/* Honeypot — invisible to sighted and screen-reader users alike,
               but a generic form-filling bot will find and fill it. Any value
-              here means it wasn't a real visitor. */}
+              here means it wasn't a real visitor. Deliberately not named
+              anything browser autofill or password managers recognise
+              (like "website"), and opted out of the common password managers,
+              so a real visitor's autofill can't fill it by accident. */}
           <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
-            <label htmlFor="website">Website</label>
+            <label htmlFor="cf-hp">Leave this field blank</label>
             <input
               type="text"
-              id="website"
-              name="website"
+              id="cf-hp"
+              name="cf-hp"
               tabIndex={-1}
               autoComplete="off"
+              data-1p-ignore=""
+              data-lpignore="true"
+              data-bwignore=""
+              data-form-type="other"
               value={honeypot}
               onChange={(e) => setHoneypot(e.target.value)}
             />

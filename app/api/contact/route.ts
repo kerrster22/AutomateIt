@@ -16,9 +16,36 @@ type ContactPayload = {
   message?: string;
   // Bot-detection fields, not real contact data — see the honeypot/timing
   // check below.
-  website?: string;
-  renderedAt?: number;
+  hp?: string;
+  elapsedMs?: number;
 };
+
+const FALLBACK_EMAIL = "info@automateit.tech";
+
+// Structured, single-line JSON logs for every outcome of this route. They
+// land in Vercel → Project → Logs (filter by "contact" or a ref), which only
+// members of the Vercel team can see — nothing here is ever sent to the
+// visitor apart from the short `ref`. Deliberately no message bodies, names,
+// secrets or full email addresses: just enough to diagnose a failure.
+type LogLevel = "info" | "warn" | "error";
+function log(level: LogLevel, ref: string, event: string, details: Record<string, unknown> = {}) {
+  const line = JSON.stringify({ scope: "contact", ref, event, ...details });
+  if (level === "error") console.error(line);
+  else if (level === "warn") console.warn(line);
+  else console.log(line);
+}
+
+function errorDetails(err: unknown) {
+  if (err && typeof err === "object") {
+    const e = err as { name?: string; message?: string; errorCode?: string; subError?: string };
+    return { errName: e.name, errCode: e.errorCode, errSubCode: e.subError, errMessage: e.message?.slice(0, 500) };
+  }
+  return { errMessage: String(err).slice(0, 500) };
+}
+
+function failure(ref: string, status: number, error: string) {
+  return NextResponse.json({ error, ref }, { status });
+}
 
 function escapeHtml(value: string) {
   return value
@@ -69,35 +96,72 @@ async function sendMail(accessToken: string, emailUser: string, message: Record<
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Graph sendMail failed: ${response.status} ${errorText}`);
+    throw new GraphError(response.status, errorText);
+  }
+}
+
+// Carries Graph's own error code (e.g. MailboxNotEnabledForRESTAPI,
+// ErrorAccessDenied, ResourceNotFound) so the log says *why* sending failed.
+class GraphError extends Error {
+  status: number;
+  graphCode?: string;
+  constructor(status: number, body: string) {
+    let graphCode: string | undefined;
+    let graphMessage = body;
+    try {
+      const parsed = JSON.parse(body) as { error?: { code?: string; message?: string } };
+      graphCode = parsed.error?.code;
+      graphMessage = parsed.error?.message ?? body;
+    } catch {
+      // Non-JSON body — keep the raw text.
+    }
+    super(`Graph sendMail failed: ${status} ${graphMessage}`.slice(0, 500));
+    this.name = "GraphError";
+    this.status = status;
+    this.graphCode = graphCode;
   }
 }
 
 export async function POST(req: Request) {
+  // Short ID shown to the visitor on failure and stamped on every log line,
+  // so a screenshot of the error can be matched to the exact log entries.
+  const ref = crypto.randomUUID().slice(0, 8);
+  log("info", ref, "received", {
+    host: req.headers.get("host"),
+    vercelEnv: process.env.VERCEL_ENV ?? "unknown",
+    userAgent: req.headers.get("user-agent")?.slice(0, 300),
+  });
+
   if (isRateLimited(clientIp(req))) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    log("warn", ref, "rate_limited");
+    return failure(ref, 429, "Too many requests. Please try again later.");
   }
 
   let payload: ContactPayload;
   try {
     payload = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    log("warn", ref, "invalid_body", { contentType: req.headers.get("content-type") });
+    return failure(ref, 400, "Invalid request body");
   }
 
   // Honeypot + minimum-fill-time bot check. A real visitor never sees or
-  // fills the "website" field (hidden from sighted and screen-reader users
+  // fills the honeypot field (hidden from sighted and screen-reader users
   // alike — see the form). 5 seconds is safe even with browser autofill:
   // autofill can populate name/email/company instantly, but the message
   // field still requires genuinely typing a real sentence, which autofill
-  // can't do. Bots that skip the page's JS entirely and POST straight to
-  // this route won't have a plausible `renderedAt` either, so they're still
-  // caught. Respond as if it succeeded either way, so scripted submitters
-  // get no signal that they were caught rather than genuinely delivered.
-  const isHoneypotFilled = Boolean(payload.website?.trim());
-  const filledTooFast =
-    typeof payload.renderedAt === "number" && Date.now() - payload.renderedAt < MIN_FILL_TIME_MS;
+  // can't do. `elapsedMs` is measured entirely on the visitor's own clock
+  // (render → submit), so a device clock that's out of sync with the server
+  // can't make a real person look like a bot. Respond as if it succeeded
+  // either way, so scripted submitters get no signal that they were caught —
+  // but log it, since a false positive is otherwise invisible.
+  const isHoneypotFilled = Boolean(payload.hp?.trim());
+  const filledTooFast = typeof payload.elapsedMs === "number" && payload.elapsedMs < MIN_FILL_TIME_MS;
   if (isHoneypotFilled || filledTooFast) {
+    log("warn", ref, "dropped_as_bot", {
+      honeypotFilled: isHoneypotFilled,
+      elapsedMs: payload.elapsedMs,
+    });
     return NextResponse.json({ message: "Enquiry sent" });
   }
 
@@ -119,26 +183,44 @@ export async function POST(req: Request) {
     message.length > 5000 ||
     context.length > 200
   ) {
-    return NextResponse.json({ error: "Missing or invalid fields" }, { status: 400 });
+    log("warn", ref, "validation_failed", {
+      nameMissing: !name,
+      nameTooLong: name.length > 200,
+      companyTooLong: company.length > 200,
+      emailInvalid: !email || email.length > 320 || !EMAIL_RE.test(email),
+      messageLength: message.length,
+      contextTooLong: context.length > 200,
+    });
+    return failure(ref, 400, "Missing or invalid fields");
   }
 
-  const emailUser = process.env.EMAIL_USER;
+  const emailDomain = email.split("@")[1];
+  const unavailable = `Sorry, we couldn't send your enquiry just now. Please email us directly at ${FALLBACK_EMAIL}.`;
+
+  // Names only, never values — tells you at a glance whether this
+  // deployment (e.g. a Preview URL) is missing env vars.
+  const missingEnv = ["TENANT_ID", "CLIENT_ID", "CLIENT_SECRET", "EMAIL_USER", "CONTACT_EMAIL_TO"].filter(
+    (key) => !process.env[key]
+  );
+  if (missingEnv.length) {
+    log("error", ref, "missing_config", { missingEnv, vercelEnv: process.env.VERCEL_ENV ?? "unknown" });
+    return failure(ref, 500, unavailable);
+  }
+
+  const emailUser = process.env.EMAIL_USER!;
   const recipient =
     enq === "Partner"
-      ? process.env.CONTACT_EMAIL_PARTNER || process.env.CONTACT_EMAIL_TO
-      : process.env.CONTACT_EMAIL_TO;
-
-  if (!emailUser || !recipient) {
-    console.error("Contact form is missing EMAIL_USER or CONTACT_EMAIL_TO configuration");
-    return NextResponse.json({ error: "Contact form is not configured" }, { status: 500 });
-  }
+      ? process.env.CONTACT_EMAIL_PARTNER || process.env.CONTACT_EMAIL_TO!
+      : process.env.CONTACT_EMAIL_TO!;
 
   let accessToken: string;
   try {
     accessToken = await getAccessToken();
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Failed to authenticate with email service" }, { status: 500 });
+    // AADSTS7000222 = client secret expired; AADSTS7000215 = wrong secret;
+    // AADSTS700016 = wrong CLIENT_ID / TENANT_ID.
+    log("error", ref, "auth_failed", errorDetails(err));
+    return failure(ref, 500, unavailable);
   }
 
   const safeName = escapeHtml(name);
@@ -205,9 +287,15 @@ export async function POST(req: Request) {
       replyTo: [{ emailAddress: { address: email, name } }],
     });
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Failed to send enquiry" }, { status: 500 });
+    log("error", ref, "send_failed", {
+      ...errorDetails(err),
+      graphStatus: err instanceof GraphError ? err.status : undefined,
+      graphCode: err instanceof GraphError ? err.graphCode : undefined,
+      enq,
+    });
+    return failure(ref, 500, unavailable);
   }
+  log("info", ref, "sent", { enq, emailDomain });
 
   const paragraph = (text: string) =>
     `<p style="font-family:Arial,sans-serif;font-size:16px;line-height:1.6;color:#1a1a1a;margin:0 0 16px;">${text}</p>`;
@@ -245,7 +333,12 @@ export async function POST(req: Request) {
     });
   } catch (err) {
     // Non-fatal — the enquiry itself already reached the team.
-    console.error("Failed to send confirmation email:", err);
+    log("warn", ref, "confirmation_failed", {
+      ...errorDetails(err),
+      graphStatus: err instanceof GraphError ? err.status : undefined,
+      graphCode: err instanceof GraphError ? err.graphCode : undefined,
+      emailDomain,
+    });
   }
 
   return NextResponse.json({ message: "Enquiry sent" });

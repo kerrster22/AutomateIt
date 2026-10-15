@@ -20,9 +20,20 @@ copy lives in `lib/site-data.ts`, transcribed verbatim from the approved design 
 see the file's header comment for provenance notes (e.g. the four Use Cases are
 still client-supplied placeholders, not invented examples).
 
-The contact form validates client-side and **simulates** submission (no backend
-is wired up yet — see the comment in `components/contact-form.tsx` for where to
-add a real email-delivery API route).
+The contact form validates client-side and submits to `app/api/contact/route.ts`,
+which sends mail via Microsoft Graph (delegated through an Entra ID app
+registration using client-credentials auth — see `.env.example` for the
+required variables).
+
+Analytics is Google Analytics 4, gated behind the cookie banner
+(`components/cookie-consent.tsx`) — nothing loads until a visitor accepts.
+Set `NEXT_PUBLIC_GA_MEASUREMENT_ID` (see `.env.example`) to enable it.
+`instrumentation-client.ts` boots it on return visits and fires a manual
+`page_view` on client-side navigations (see `lib/analytics.ts`). Contact form
+submissions fire a `generate_lead` event with an `enquiry_type` param
+("Customer" or "Partner") so the two can be split in reports — mark
+`generate_lead` as a key event and register `enquiry_type` as a custom
+dimension in the GA4 admin UI to see it broken out.
 
 ---
 
